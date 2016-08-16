@@ -21,12 +21,12 @@ public class BuildVars {
 
     public static final String DirectionsApiKey = "<your-api-key>";
 
-    public static final String TRANSIFEXUSER = "<transifex-user>";
-    public static final String TRANSIFEXPASSWORD = "<transifex-password>";
+    public static final String TRANSIFEXUSER = "love5757@me.com";
+    public static final String TRANSIFEXPASSWORD = "xhrxhrdl0504";
 
     public static final String pathToLogs = "./";
 
-    public static final String linkDB = "jdbc:mysql://localhost:3306/dev_foodtruck?useUnicode=true&characterEncoding=UTF-8";
+    public static final String linkDB = "jdbc:mysql://yerina.kr:3360/dev_foodtruck?useUnicode=true&characterEncoding=UTF-8";
     public static final String controllerDB = "com.mysql.jdbc.Driver";
     public static final String userDB = "aapp24";
     public static final String password = "wnddud00";

@@ -1,5 +1,7 @@
 package org.telegram.updateshandlers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.BotConfig;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -34,6 +36,8 @@ public class ChannelHandlers extends TelegramLongPollingBot {
 
     private final ConcurrentHashMap<Integer, Integer> userState = new ConcurrentHashMap<>();
 
+    static final Logger logger = LoggerFactory.getLogger(ChannelHandlers.class);
+
     @Override
     public void onUpdateReceived(Update update) {
         try {
@@ -65,6 +69,9 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     // region Incoming messages handlers
 
     private void handleIncomingMessage(Message message) throws InvalidObjectException {
+
+        logger.debug("{}"+message);
+
         int state = userState.getOrDefault(message.getFrom().getId(), 0);
         switch(state) {
             case WAITINGCHANNEL:
