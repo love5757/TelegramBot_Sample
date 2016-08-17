@@ -4,7 +4,8 @@ import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.logging.BotLogger;
 import org.telegram.telegrambots.logging.BotsFileHandler;
-import org.telegram.updateshandlers.*;
+import org.telegram.updateshandlers.ChatHandlers;
+import org.telegram.updateshandlers.WebHookExampleHandlers;
 
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
@@ -31,13 +32,9 @@ public class Main {
         try {
             TelegramBotsApi telegramBotsApi = createTelegramBotsApi();
             try {
-                // Register long polling bots. They work regardless type of TelegramBotsApi we are creating
-                telegramBotsApi.registerBot(new ChannelHandlers());
-                //telegramBotsApi.registerBot(new DirectionsHandlers());
-//                telegramBotsApi.registerBot(new RaeHandlers());
-//                telegramBotsApi.registerBot(new TransifexHandlers());
-//                telegramBotsApi.registerBot(new FilesHandlers());
-                //telegramBotsApi.registerBot(new CommandsHandler());
+
+                telegramBotsApi.registerBot(new ChatHandlers());
+
             } catch (TelegramApiException e) {
                 BotLogger.error(LOGTAG, e);
             }
