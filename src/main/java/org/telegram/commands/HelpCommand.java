@@ -2,7 +2,6 @@ package org.telegram.commands;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.telegram.database.DatabaseManager;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
@@ -29,10 +28,6 @@ public class HelpCommand extends BotCommand {
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-
-        if (!DatabaseManager.getInstance().getUserStateForCommandsBot(user.getId())) {
-            return;
-        }
 
         StringBuilder helpMessageBuilder = new StringBuilder("<b>Help</b>\n");
         helpMessageBuilder.append("These are the registered commands for this Bot:\n\n");
