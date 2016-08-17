@@ -1,5 +1,7 @@
 package org.telegram.commands;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.database.DatabaseManager;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -19,12 +21,16 @@ public class HelloCommand extends BotCommand {
 
     private static final String LOGTAG = "HELLOCOMMAND";
 
+    static final Logger logger = LoggerFactory.getLogger(HelloCommand.class);
+
     public HelloCommand() {
         super("hello", "Say hallo to this bot");
     }
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
+
+        logger.debug("[{}][{}][{}][{}]",absSender, user, chat, arguments);
 
         if (!DatabaseManager.getInstance().getUserStateForCommandsBot(user.getId())) {
             return;
