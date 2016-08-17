@@ -1,5 +1,7 @@
 package org.telegram.commands;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.database.DatabaseManager;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -8,7 +10,6 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
 import org.telegram.telegrambots.bots.commands.ICommandRegistry;
-import org.telegram.telegrambots.logging.BotLogger;
 
 /**
  * This command helps the user to find the command they need
@@ -17,7 +18,7 @@ import org.telegram.telegrambots.logging.BotLogger;
  */
 public class HelpCommand extends BotCommand {
 
-    private static final String LOGTAG = "HELPCOMMAND";
+    static final Logger logger = LoggerFactory.getLogger(HelpCommand.class);
 
     private final ICommandRegistry commandRegistry;
 
@@ -48,7 +49,7 @@ public class HelpCommand extends BotCommand {
         try {
             absSender.sendMessage(helpMessage);
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            logger.error(e.getMessage());
         }
     }
 }

@@ -1,5 +1,7 @@
 package org.telegram.commands;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.database.DatabaseManager;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -17,7 +19,7 @@ import org.telegram.telegrambots.logging.BotLogger;
  */
 public class StopCommand extends BotCommand {
 
-    public static final String LOGTAG = "STOPCOMMAND";
+    static final Logger logger = LoggerFactory.getLogger(StopCommand.class);
 
     /**
      * Construct
@@ -41,7 +43,7 @@ public class StopCommand extends BotCommand {
             try {
                 absSender.sendMessage(answer);
             } catch (TelegramApiException e) {
-                BotLogger.error(LOGTAG, e);
+                logger.error(e.getMessage());
             }
         }
     }

@@ -9,7 +9,6 @@ import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
-import org.telegram.telegrambots.logging.BotLogger;
 
 /**
  * This command simply replies with a hello to the users command and
@@ -18,8 +17,6 @@ import org.telegram.telegrambots.logging.BotLogger;
  * @author Timo Schulz (Mit0x2)
  */
 public class HelloCommand extends BotCommand {
-
-    private static final String LOGTAG = "HELLOCOMMAND";
 
     static final Logger logger = LoggerFactory.getLogger(HelloCommand.class);
 
@@ -55,7 +52,7 @@ public class HelloCommand extends BotCommand {
         try {
             absSender.sendMessage(answer);
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            logger.error(e.getMessage());
         }
     }
 }

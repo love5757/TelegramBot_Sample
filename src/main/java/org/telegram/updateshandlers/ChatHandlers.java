@@ -2,12 +2,15 @@ package org.telegram.updateshandlers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.telegram.BotConfig;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.commands.HelloCommand;
 import org.telegram.commands.HelpCommand;
 import org.telegram.commands.StartCommand;
 import org.telegram.commands.StopCommand;
-import org.telegram.database.DatabaseManager;
+import org.telegram.constant.BotConfig;
+import org.telegram.domain.respones.SimsimiRespones;
 import org.telegram.services.Emoji;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -18,6 +21,9 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
 
 import java.io.InvalidObjectException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -65,10 +71,6 @@ public class ChatHandlers extends TelegramLongPollingCommandBot {
         if (update.hasMessage()) {
             Message message = update.getMessage();
 
-            if (!DatabaseManager.getInstance().getUserStateForCommandsBot(message.getFrom().getId())) {
-                return;
-            }
-
             try {
                 message = update.getMessage();
                 if (message != null && message.hasText()) {
@@ -96,18 +98,13 @@ public class ChatHandlers extends TelegramLongPollingCommandBot {
 
     private void handleIncomingMessage(Message message) throws InvalidObjectException {
 
-        logger.debug("{}"+message);
-
-        int state = userState.getOrDefault(message.getFrom().getId(), 0);
-        switch(state) {
-            case WAITINGCHANNEL:
-                onWaitingChannelMessage(message);
-                break;
-            default:
-                sendHelpMessage(message.getChatId().toString(), message.getMessageId(), null);
-                userState.put(message.getFrom().getId(), WAITINGCHANNEL);
-                break;
+        try {
+            simsimiConversation(message, null);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            sendErrorMessage(message,e.getMessage());
         }
+
     }
 
     private void onWaitingChannelMessage(Message message) throws InvalidObjectException {
@@ -200,6 +197,40 @@ public class ChatHandlers extends TelegramLongPollingCommandBot {
         try {
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {
+            logger.error("{}",e);
+        }
+    }
+
+
+    private void simsimiConversation( Message message, ReplyKeyboardMarkup replyKeyboardMarkup) throws UnsupportedEncodingException {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        String baseUrl = "http://sandbox.api.simsimi.com/request.p?key="+BotConfig.SIMSIMI_API_KEY+"&lc=ko&ft=1.0&text=";
+        final String encodeText = URLEncoder.encode(message.getText(), "UTF-8");
+        URI uri = URI.create(baseUrl+ encodeText);
+
+        final SimsimiRespones simsimiResult = restTemplate.getForObject(uri, SimsimiRespones.class);
+
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(true);
+        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setReplyToMessageId(message.getMessageId());
+
+
+        if (replyKeyboardMarkup != null) {
+            sendMessage.setReplyMarkup(replyKeyboardMarkup);
+        }
+
+        if(StringUtils.isEmpty(simsimiResult.getResponse())){
+            sendMessage.setText(simsimiResult.getMsg());
+        }else{
+            sendMessage.setText(simsimiResult.getResponse());
+        }
+
+        try {
+            sendMessage(sendMessage);
+        } catch (TelegramApiException e) {
+            sendErrorMessage(message,"심심이 대화하다 알수 없는 에러 발생!!!!");
             logger.error("{}",e);
         }
     }

@@ -1,5 +1,7 @@
 package org.telegram.commands;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.database.DatabaseManager;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -7,7 +9,6 @@ import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
-import org.telegram.telegrambots.logging.BotLogger;
 
 /**
  * This commands starts the conversation with the bot
@@ -16,7 +17,7 @@ import org.telegram.telegrambots.logging.BotLogger;
  */
 public class StartCommand extends BotCommand {
 
-    public static final String LOGTAG = "STARTCOMMAND";
+    static final Logger logger = LoggerFactory.getLogger(StartCommand.class);
 
     public StartCommand() {
         super("start", "With this command you can start the Bot");
@@ -45,7 +46,7 @@ public class StartCommand extends BotCommand {
         try {
             absSender.sendMessage(answer);
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            logger.error(e.getMessage());
         }
     }
 }

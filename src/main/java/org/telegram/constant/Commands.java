@@ -1,4 +1,4 @@
-package org.telegram;
+package org.telegram.constant;
 
 /**
  * @author Ruben Bermudez

@@ -11,7 +11,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
-import org.telegram.BuildVars;
+import org.telegram.constant.BuildVars;
 import org.telegram.telegrambots.logging.BotLogger;
 
 import java.io.UnsupportedEncodingException;
@@ -31,7 +31,7 @@ public class DirectionsService {
 
     private static final String BASEURL = "https://maps.googleapis.com/maps/api/directions/json"; ///< Base url for REST
     private static final String APIIDEND = "&key=" + BuildVars.DirectionsApiKey;
-    private static final String PARAMS = "&language=@language@&units=metric";
+    private static final String PARAMS = "&language=ko&units=metric";
     private static final DateTimeFormatter dateFormaterFromDate = DateTimeFormatter.ofPattern("dd/MM/yyyy"); ///< Date to text formater
     private static volatile DirectionsService instance; ///< Instance of this class
 

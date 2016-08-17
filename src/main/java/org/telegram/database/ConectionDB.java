@@ -7,7 +7,7 @@
  */
 package org.telegram.database;
 
-import org.telegram.BuildVars;
+import org.telegram.constant.BuildVars;
 import org.telegram.telegrambots.logging.BotLogger;
 
 import java.sql.Connection;
