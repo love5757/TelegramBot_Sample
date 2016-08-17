@@ -5,8 +5,7 @@ import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.logging.BotLogger;
 import org.telegram.telegrambots.logging.BotsFileHandler;
-import org.telegram.updateshandlers.ChatHandlers;
-import org.telegram.updateshandlers.WebHookExampleHandlers;
+import org.telegram.updateshandlers.ChatHandler;
 
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
@@ -34,7 +33,7 @@ public class Main {
             TelegramBotsApi telegramBotsApi = createTelegramBotsApi();
             try {
 
-                telegramBotsApi.registerBot(new ChatHandlers());
+                telegramBotsApi.registerBot(new ChatHandler());
 
             } catch (TelegramApiException e) {
                 BotLogger.error(LOGTAG, e);
@@ -45,18 +44,10 @@ public class Main {
     }
 
     private static TelegramBotsApi createTelegramBotsApi() throws TelegramApiException {
-        TelegramBotsApi telegramBotsApi;
+        TelegramBotsApi telegramBotsApi = null;
         if (!BuildVars.useWebHook) {
             // Default (long polling only)
             telegramBotsApi = createLongPollingTelegramBotsApi();
-        } else if (!BuildVars.pathToCertificatePublicKey.isEmpty()) {
-            // Filled a path to a pem file ? looks like you're going for the self signed option then, invoke with store and pem file to supply.
-            telegramBotsApi = createSelfSignedTelegramBotsApi();
-            telegramBotsApi.registerBot(new WebHookExampleHandlers());
-        } else {
-            // Non self signed, make sure you've added private/public and if needed intermediate to your cert-store.
-            telegramBotsApi = createNoSelfSignedTelegramBotsApi();
-            telegramBotsApi.registerBot(new WebHookExampleHandlers());
         }
         return telegramBotsApi;
     }

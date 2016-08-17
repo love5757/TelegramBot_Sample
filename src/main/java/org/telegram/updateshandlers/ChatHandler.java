@@ -29,9 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by philip on 2016-08-17.
  */
-public class ChatHandlers extends TelegramLongPollingCommandBot {
+public class ChatHandler extends TelegramLongPollingCommandBot {
 
-    static final Logger logger = LoggerFactory.getLogger(ChatHandlers.class);
+    static final Logger logger = LoggerFactory.getLogger(ChatHandler.class);
 
     private static final String HELP_TEXT = "Send me the channel username where you added me as admin.";
     private static final String CANCEL_COMMAND = "/stop";
@@ -42,9 +42,8 @@ public class ChatHandlers extends TelegramLongPollingCommandBot {
 
     private final ConcurrentHashMap<Integer, Integer> userState = new ConcurrentHashMap<>();
 
-    private static final int WAITINGCHANNEL = 1;
 
-    public ChatHandlers(){
+    public ChatHandler(){
         register(new HelloCommand());
         register(new StartCommand());
         register(new StopCommand());
