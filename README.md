@@ -12,6 +12,3 @@ hello - 인사
 
 #Warring
 Test
-
-#Test
-branch test
