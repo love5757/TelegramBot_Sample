@@ -17,7 +17,7 @@ import java.util.logging.Level;
  * @brief Main class to create all bots
  * @date 20 of June of 2015
  */
-public class Main {
+public class Application {
     private static final String LOGTAG = "MAIN";
 
     public static void main(String[] args) {
