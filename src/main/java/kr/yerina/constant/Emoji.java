@@ -1,4 +1,4 @@
-package kr.yerina.services;
+package kr.yerina.constant;
 
 /**
  * @author Ruben Bermudez
