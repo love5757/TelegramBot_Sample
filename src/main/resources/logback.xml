@@ -2,16 +2,29 @@
 <!-- 30초마다 설정 파일의 변경을 확인한다. 파일이 변경되면 다시 로딩한다 -->
 <configuration scan="true" scanPeriod="30 seconds">
 
-    <!-- 외부 설정파일을 사용할 수 있다. -->
-    <property resource="resource.properties"/>
+    <property name="LOG_DIR" value="/service/logs/TELEGRAM_BOT/" />
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <param name="Target" value="System.out" />
         <encoder>
-            <pattern> %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5p: %c - %m%n
+            </pattern>
         </encoder>
     </appender>
+
+    <appender name="dailyRolling"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/telegramBot-%d{yyyyMMdd}.log</fileNamePattern>
+            <maxHistory>720</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5p: %c - %m%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${APP_HOME}/TelegramBot.log</file>
+        <file>${LOG_DIR}/TelegramBot.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 파일이 하루에 한개씩 생성된다 -->
             <fileNamePattern>TelegramBot.%d{yyyy-MM-dd}.log</fileNamePattern>
@@ -26,10 +39,11 @@
         </encoder>
     </appender>
 
-    <logger name="org.springframework" level="info"/>
+    <logger name="org.springframework" level="debug"/>
     <logger name="org.hibernate" level="debug"/>
-    <logger name="com.sujemall.webapp" level="debug"/>
-    <if condition='property("RUN_MODE").equals("SERVICE")'>
+
+
+    <if condition='p("server.type").equals("real")'>
         <then>
             <!-- 설정파일에 RUN_MODE 가 SERVICE로 정의되어 있으면 로깅 레벨을 INFO로 지정 -->
             <root level="info">
