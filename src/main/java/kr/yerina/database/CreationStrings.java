@@ -1,4 +1,4 @@
-package org.telegram.database;
+package kr.yerina.database;
 
 /**
  * @author Ruben Bermudez

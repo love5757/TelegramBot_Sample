@@ -1,4 +1,4 @@
-package org.telegram.services;
+package kr.yerina.services;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -11,7 +11,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
-import org.telegram.constant.BuildVars;
+import kr.yerina.constant.BuildVars;
 import org.telegram.telegrambots.logging.BotLogger;
 
 import java.io.UnsupportedEncodingException;

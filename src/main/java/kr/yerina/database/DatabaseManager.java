@@ -5,7 +5,7 @@
  *
  * Copyright Ruben Bermudez, 3/12/14.
  */
-package org.telegram.database;
+package kr.yerina.database;
 
 import org.telegram.telegrambots.logging.BotLogger;
 

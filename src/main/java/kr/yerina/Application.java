@@ -1,11 +1,11 @@
-package org.telegram;
+package kr.yerina;
 
-import org.telegram.constant.BuildVars;
+import kr.yerina.updateshandlers.ChatHandler;
+import kr.yerina.constant.BuildVars;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.logging.BotLogger;
 import org.telegram.telegrambots.logging.BotsFileHandler;
-import org.telegram.updateshandlers.ChatHandler;
 
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;

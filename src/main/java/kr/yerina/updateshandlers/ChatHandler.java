@@ -1,17 +1,17 @@
-package org.telegram.updateshandlers;
+package kr.yerina.updateshandlers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import org.telegram.commands.HelloCommand;
-import org.telegram.commands.HelpCommand;
-import org.telegram.commands.StartCommand;
-import org.telegram.commands.StopCommand;
-import org.telegram.constant.BotConfig;
-import org.telegram.domain.respones.SimsimiRespones;
-import org.telegram.services.Emoji;
+import kr.yerina.commands.HelloCommand;
+import kr.yerina.commands.HelpCommand;
+import kr.yerina.commands.StartCommand;
+import kr.yerina.commands.StopCommand;
+import kr.yerina.constant.BotConfig;
+import kr.yerina.domain.respones.SimsimiRespones;
+import kr.yerina.services.Emoji;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
@@ -47,8 +47,7 @@ public class ChatHandler extends TelegramLongPollingCommandBot {
         register(new HelloCommand());
         register(new StartCommand());
         register(new StopCommand());
-        HelpCommand helpCommand = new HelpCommand(this);
-        register(helpCommand);
+        register(new HelpCommand(this));
 
         registerDefaultAction((absSender, message) -> {
             SendMessage commandUnknownMessage = new SendMessage();
@@ -59,7 +58,6 @@ public class ChatHandler extends TelegramLongPollingCommandBot {
             } catch (TelegramApiException e) {
                 logger.error("{}",e);
             }
-            helpCommand.execute(absSender, message.getFrom(), message.getChat(), new String[] {});
         });
     }
 

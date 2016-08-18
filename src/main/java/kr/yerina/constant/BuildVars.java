@@ -1,4 +1,4 @@
-package org.telegram.constant;
+package kr.yerina.constant;
 
 /**
  * @author Ruben Bermudez

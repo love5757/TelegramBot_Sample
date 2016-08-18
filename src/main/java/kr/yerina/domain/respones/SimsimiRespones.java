@@ -1,4 +1,4 @@
-package org.telegram.domain.respones;
+package kr.yerina.domain.respones;
 
 import lombok.Data;
 
