@@ -8,6 +8,7 @@
 - start - 시작
 - stop - 종료
 - hello - 인사
+- lotto - 로또 번호 조회 및 추천 번호 보여주기
 
 
 #Markdown

@@ -1,13 +1,17 @@
 package kr.yerina.command;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.TelegramApiException;
+import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
+import org.telegram.telegrambots.updateshandlers.SentCallback;
 
 /**
  * This command simply replies with a hello to the users command and
@@ -43,11 +47,31 @@ public class HelloCommand extends BotCommand {
         SendMessage answer = new SendMessage();
         answer.setChatId(chat.getId().toString());
         answer.setText(messageTextBuilder.toString());
+        //커맨트에 대한 reply id setting
+
 
         try {
-            absSender.sendMessage(answer);
+
+            absSender.sendMessageAsync(answer, new SentCallback<Message>() {
+                @Override
+                public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
+                    Message sentMessage = method.deserializeResponse(jsonObject);
+                    logger.debug(sentMessage.toString());
+                }
+
+                @Override
+                public void onError(BotApiMethod<Message> botApiMethod, JSONObject jsonObject) {
+                }
+
+                @Override
+                public void onException(BotApiMethod<Message> botApiMethod, Exception e) {
+                }
+            });
+
         } catch (TelegramApiException e) {
             logger.error(e.getMessage());
         }
     }
+
+
 }

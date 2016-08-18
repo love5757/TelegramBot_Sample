@@ -1,13 +1,7 @@
 package kr.yerina.updateshandler;
 
-import kr.yerina.command.HelloCommand;
-import kr.yerina.command.HelpCommand;
-import kr.yerina.command.StartCommand;
-import kr.yerina.command.StopCommand;
 import kr.yerina.constant.BotConfig;
-import kr.yerina.constant.BuildVars;
 import kr.yerina.domain.respones.SimsimiRespones;
-import kr.yerina.constant.Emoji;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -21,7 +15,7 @@ import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
 import javax.annotation.PostConstruct;
 import java.io.InvalidObjectException;
@@ -34,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by philip on 2016-08-17.
  */
 @Component
-public class ChatHandler extends TelegramLongPollingCommandBot {
+public class ChatHandler extends TelegramLongPollingBot {
 
     static final Logger logger = LoggerFactory.getLogger(ChatHandler.class);
 
@@ -51,54 +45,15 @@ public class ChatHandler extends TelegramLongPollingCommandBot {
     public void init() {
 
         try {
-            TelegramBotsApi telegramBotsApi = createTelegramBotsApi();
-            try {
-
-                telegramBotsApi.registerBot(new ChatHandler());
-
-            } catch (TelegramApiException e) {
-                logger.error(e.getMessage());
-            }
+            TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+            telegramBotsApi.registerBot(new ChatHandler());
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
 
-    private static TelegramBotsApi createTelegramBotsApi() throws TelegramApiException {
-        TelegramBotsApi telegramBotsApi = null;
-        if (!BuildVars.useWebHook) {
-            // Default (long polling only)
-            telegramBotsApi = createLongPollingTelegramBotsApi();
-        }
-        return telegramBotsApi;
-    }
-
-    private static TelegramBotsApi createLongPollingTelegramBotsApi() {
-        return new TelegramBotsApi();
-    }
-
-
-    public ChatHandler(){
-        register(new HelloCommand());
-        register(new StartCommand());
-        register(new StopCommand());
-        register(new HelpCommand(this));
-
-        registerDefaultAction((absSender, message) -> {
-            SendMessage commandUnknownMessage = new SendMessage();
-            commandUnknownMessage.setChatId(message.getChatId().toString());
-            commandUnknownMessage.setText("The command '" + message.getText() + "' is not known by this bot. Here comes some help " + Emoji.AMBULANCE);
-            try {
-                absSender.sendMessage(commandUnknownMessage);
-            } catch (TelegramApiException e) {
-                logger.error("{}",e);
-            }
-        });
-    }
-
-
     @Override
-    public void processNonCommandUpdate(Update update) {
+    public void onUpdateReceived(Update update) {
         logger.debug("{}",update);
         if (update.hasMessage()) {
             Message message = update.getMessage();
@@ -107,7 +62,6 @@ public class ChatHandler extends TelegramLongPollingCommandBot {
                 message = update.getMessage();
                 if (message != null && message.hasText()) {
                     try {
-                        //메세지 핸들링
                         handleIncomingMessage(message);
                     } catch (InvalidObjectException e) {
                         logger.error("{}",e);
