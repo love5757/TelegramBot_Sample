@@ -1,9 +1,9 @@
-package kr.yerina.updateshandlers;
+package kr.yerina.updateshandler;
 
-import kr.yerina.commands.HelloCommand;
-import kr.yerina.commands.HelpCommand;
-import kr.yerina.commands.StartCommand;
-import kr.yerina.commands.StopCommand;
+import kr.yerina.command.HelloCommand;
+import kr.yerina.command.HelpCommand;
+import kr.yerina.command.StartCommand;
+import kr.yerina.command.StopCommand;
 import kr.yerina.constant.BotConfig;
 import kr.yerina.constant.BuildVars;
 import kr.yerina.domain.respones.SimsimiRespones;

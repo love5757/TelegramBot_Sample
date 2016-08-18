@@ -1,4 +1,4 @@
-package kr.yerina.commands;
+package kr.yerina.command;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,36 +10,36 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
 
 /**
- * This commands starts the conversation with the bot
+ * This commands stops the conversation with the bot.
+ * Bot won't respond to user until he sends a start command
  *
  * @author Timo Schulz (Mit0x2)
  */
-public class StartCommand extends BotCommand {
+public class StopCommand extends BotCommand {
 
-    static final Logger logger = LoggerFactory.getLogger(StartCommand.class);
+    static final Logger logger = LoggerFactory.getLogger(StopCommand.class);
 
-    public StartCommand() {
-        super("start", "With this command you can start the Bot");
+    /**
+     * Construct
+     */
+    public StopCommand() {
+        super("stop", "With this command you can stop the Bot");
     }
 
     @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-
-        StringBuilder messageBuilder = new StringBuilder();
+    public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
 
         String userName = user.getFirstName() + " " + user.getLastName();
 
-        messageBuilder.append("Welcome ").append(userName).append("\n");
-        messageBuilder.append("this bot will demonstrate you the command feature of the Java TelegramBots API!");
-
         SendMessage answer = new SendMessage();
         answer.setChatId(chat.getId().toString());
-        answer.setText(messageBuilder.toString());
+        answer.setText("Good bye " + userName + "\n" + "Hope to see you soon!");
 
         try {
             absSender.sendMessage(answer);
         } catch (TelegramApiException e) {
             logger.error(e.getMessage());
         }
+
     }
 }
