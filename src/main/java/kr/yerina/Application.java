@@ -1,89 +1,31 @@
 package kr.yerina;
 
-import kr.yerina.updateshandlers.ChatHandler;
-import kr.yerina.constant.BuildVars;
-import org.telegram.telegrambots.TelegramApiException;
-import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.logging.BotLogger;
-import org.telegram.telegrambots.logging.BotsFileHandler;
-
-import java.io.IOException;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
+import kr.yerina.context.RootContext;
+import kr.yerina.context.SystemProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * @author Ruben Bermudez
- * @version 1.0
- * @brief Main class to create all bots
- * @date 20 of June of 2015
+ *
  */
 public class Application {
-    private static final String LOGTAG = "MAIN";
+
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
-        BotLogger.setLevel(Level.ALL);
-        BotLogger.registerLogger(new ConsoleHandler());
+        (new Application()).init();
+    }
+
+    private void init() {
         try {
-            BotLogger.registerLogger(new BotsFileHandler());
-        } catch (IOException e) {
-            BotLogger.severe(LOGTAG, e);
-        }
-
-        try {
-            TelegramBotsApi telegramBotsApi = createTelegramBotsApi();
-            try {
-
-                telegramBotsApi.registerBot(new ChatHandler());
-
-            } catch (TelegramApiException e) {
-                BotLogger.error(LOGTAG, e);
+            // System Property Setting
+            SystemProperty.init();
+            if(RootContext.applicationContext == null){
+                logger.error("Spring applicationContext 설정 오류");
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            logger.error(e.getMessage(), e);
         }
-    }
 
-    private static TelegramBotsApi createTelegramBotsApi() throws TelegramApiException {
-        TelegramBotsApi telegramBotsApi = null;
-        if (!BuildVars.useWebHook) {
-            // Default (long polling only)
-            telegramBotsApi = createLongPollingTelegramBotsApi();
-        }
-        return telegramBotsApi;
-    }
-
-    /**
-     * @brief Creates a Telegram Bots Api to use Long Polling (getUpdates) bots.
-     * @return TelegramBotsApi to register the bots.
-     */
-    private static TelegramBotsApi createLongPollingTelegramBotsApi() {
-        return new TelegramBotsApi();
-    }
-
-    /**
-     * @brief Creates a Telegram Bots Api to use Long Polling bots and webhooks bots with self-signed certificates.
-     * @return TelegramBotsApi to register the bots.
-     *
-     * @note https://core.telegram.org/bots/self-signed#java-keystore for generating a keypair in store and exporting the pem.
-    *  @note Don't forget to split the pem bundle (begin/end), use only the public key as input!
-     */
-    private static TelegramBotsApi createSelfSignedTelegramBotsApi() throws TelegramApiException {
-        return new TelegramBotsApi(BuildVars.pathToCertificateStore, BuildVars.certificateStorePassword, BuildVars.EXTERNALWEBHOOKURL, BuildVars.INTERNALWEBHOOKURL, BuildVars.pathToCertificatePublicKey);
-    }
-
-    /**
-     * @brief Creates a Telegram Bots Api to use Long Polling bots and webhooks bots with no-self-signed certificates.
-     * @return TelegramBotsApi to register the bots.
-     *
-     * @note Coming from a set of pem files here's one way to do it:
-     * @code{.sh}
-     * openssl pkcs12 -export -in public.pem -inkey private.pem > keypair.p12
-     * keytool -importkeystore -srckeystore keypair.p12 -destkeystore server.jks -srcstoretype pkcs12
-     * #have (an) intermediate(s) to supply? first:
-     * cat public.pem intermediate.pem > set.pem (use set.pem as -in)
-     * @endcode
-     */
-    private static TelegramBotsApi createNoSelfSignedTelegramBotsApi() throws TelegramApiException {
-        return new TelegramBotsApi(BuildVars.pathToCertificateStore, BuildVars.certificateStorePassword, BuildVars.EXTERNALWEBHOOKURL, BuildVars.INTERNALWEBHOOKURL);
     }
 }

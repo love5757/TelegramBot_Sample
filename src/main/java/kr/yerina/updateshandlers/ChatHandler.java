@@ -1,18 +1,21 @@
 package kr.yerina.updateshandlers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 import kr.yerina.commands.HelloCommand;
 import kr.yerina.commands.HelpCommand;
 import kr.yerina.commands.StartCommand;
 import kr.yerina.commands.StopCommand;
 import kr.yerina.constant.BotConfig;
+import kr.yerina.constant.BuildVars;
 import kr.yerina.domain.respones.SimsimiRespones;
-import kr.yerina.services.Emoji;
+import kr.yerina.constant.Emoji;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.TelegramApiException;
+import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
@@ -20,6 +23,7 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
 
+import javax.annotation.PostConstruct;
 import java.io.InvalidObjectException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -29,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by philip on 2016-08-17.
  */
+@Component
 public class ChatHandler extends TelegramLongPollingCommandBot {
 
     static final Logger logger = LoggerFactory.getLogger(ChatHandler.class);
@@ -41,6 +46,36 @@ public class ChatHandler extends TelegramLongPollingCommandBot {
     private static final String ERROR_MESSAGE_TEXT = "There was an error sending the message to channel *%s*, the error was: ```%s```";
 
     private final ConcurrentHashMap<Integer, Integer> userState = new ConcurrentHashMap<>();
+
+    @PostConstruct
+    public void init() {
+
+        try {
+            TelegramBotsApi telegramBotsApi = createTelegramBotsApi();
+            try {
+
+                telegramBotsApi.registerBot(new ChatHandler());
+
+            } catch (TelegramApiException e) {
+                logger.error(e.getMessage());
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private static TelegramBotsApi createTelegramBotsApi() throws TelegramApiException {
+        TelegramBotsApi telegramBotsApi = null;
+        if (!BuildVars.useWebHook) {
+            // Default (long polling only)
+            telegramBotsApi = createLongPollingTelegramBotsApi();
+        }
+        return telegramBotsApi;
+    }
+
+    private static TelegramBotsApi createLongPollingTelegramBotsApi() {
+        return new TelegramBotsApi();
+    }
 
 
     public ChatHandler(){
