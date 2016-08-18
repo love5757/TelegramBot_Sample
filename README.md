@@ -4,11 +4,17 @@
 
 
 #Command
-help - 사용법
-start - 시작
-stop - 종료
-hello - 인사
+- help - 사용법
+- start - 시작
+- stop - 종료
+- hello - 인사
 
+
+#Markdown
 
 #Warring
-Test
+
+
+#Contact
+choijoungyoung@gmail.com
+love5757@me.com
