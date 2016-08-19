@@ -11,7 +11,7 @@
 
 
 	<context:component-scan base-package="kr.yerina"/>
-	
+
 	<aop:aspectj-autoproxy />
 	
 	<task:annotation-driven/>
@@ -26,6 +26,13 @@
 		</property>
 	</bean>
 
+	<bean id="telegramApplicationContext" class="kr.yerina.context.TelegramApplicationContext">
+		<property name="messageResolverList">
+			<list>
+				<bean class="kr.yerina.message.TelegramMessageResolver" init-method="init"/>
+			</list>
+		</property>
+	</bean>
 
 	<!--DB 연동시 활성화-->
 	<!--<import resource="classpath:spring/datasourceContext.xml" />-->

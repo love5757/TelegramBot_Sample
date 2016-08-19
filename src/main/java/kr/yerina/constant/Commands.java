@@ -27,4 +27,8 @@ public class Commands {
     public static final String setLanguageCommand = commandInitChar + "language";
 
     public static final String STOPCOMMAND = commandInitChar + "stop";
+
+    //로또 조회
+    public static final String LOTTO_COMMAND = commandInitChar + "lotto";
+
 }
