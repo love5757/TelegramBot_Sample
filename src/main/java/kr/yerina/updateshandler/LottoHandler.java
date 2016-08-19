@@ -10,7 +10,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.TelegramApiException;
-import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
@@ -34,17 +33,6 @@ public class LottoHandler extends TelegramLongPollingBot{
     static final Logger logger = LoggerFactory.getLogger(LottoHandler.class);
 
     private final ConcurrentHashMap<Integer, Integer> lottoState = new ConcurrentHashMap<>();
-
-
-    public void init() {
-
-        try {
-            TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
-            telegramBotsApi.registerBot(new LottoHandler());
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-    }
 
     @Override
     public void onUpdateReceived(Update update) {

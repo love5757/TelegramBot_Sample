@@ -10,9 +10,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class RootContext {
 
-	/**
-	 * The constant applicationContext.
-	 */
 	public final static ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
 			"/spring/applicationContext.xml");
 

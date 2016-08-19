@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.TelegramApiException;
-import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
@@ -17,7 +16,6 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
-import javax.annotation.PostConstruct;
 import java.io.InvalidObjectException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -41,16 +39,6 @@ public class ChatHandler extends TelegramLongPollingBot {
 
     private final ConcurrentHashMap<Integer, Integer> userState = new ConcurrentHashMap<>();
 
-    @PostConstruct
-    public void init() {
-
-        try {
-            TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
-            telegramBotsApi.registerBot(new ChatHandler());
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-    }
 
     @Override
     public void onUpdateReceived(Update update) {
