@@ -1,5 +1,8 @@
 # TelegramBot_Sample
-현재 테스트진해중이라서 소스가 거지 같음.
+
+telegram bot + spring + mysql
+ 
+ factory + command patten
 
 
 
