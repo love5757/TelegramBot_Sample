@@ -58,7 +58,6 @@ public class QueueCommandExecutor implements CommandExecutor, InitializingBean {
 	}
 
 	public void execute(BaseMessage msg) throws InterruptedException {
-		logger.debug(this.toString());
 		queue.put(msg);
 	}
 

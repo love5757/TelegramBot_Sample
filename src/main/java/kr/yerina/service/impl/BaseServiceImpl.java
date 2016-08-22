@@ -57,6 +57,8 @@ public class BaseServiceImpl implements BaseService{
 
         final SimsimiRespones simsimiResult = restTemplate.getForObject(uri, SimsimiRespones.class);
 
+        logger.debug("[simsimiResult][{}]",simsimiResult);
+
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(message.getChatId().toString());
