@@ -1,5 +1,6 @@
 package kr.yerina.process;
 
+import kr.yerina.domain.message.TelegramMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,17 @@ public class TelegramProcess extends AbstractProcess{
 
     public void procStartCommand(BaseMessage msg) {
         baseBroker.sendMessage(msg);
-        logger.debug("procStartCommand");
-
     }
 
+    public void procStopCommand(BaseMessage msg){
+        baseBroker.sendMessage(msg);
+    }
+
+    public void procHelloCommand(BaseMessage msg){ baseBroker.sendMessage(msg);}
+
+    public void procLottoCommand(BaseMessage msg){
+        TelegramMessage telegramMessage = (TelegramMessage) msg;
+        logger.debug("[procLottoCommand][{}]", telegramMessage);
+        baseBroker.sendMessage(msg);
+    }
 }

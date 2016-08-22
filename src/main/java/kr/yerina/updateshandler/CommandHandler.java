@@ -1,8 +1,6 @@
 package kr.yerina.updateshandler;
 
-import kr.yerina.command.HelloCommand;
 import kr.yerina.command.HelpCommand;
-import kr.yerina.command.StopCommand;
 import kr.yerina.constant.BotConfig;
 import kr.yerina.constant.Emoji;
 import org.slf4j.Logger;
@@ -21,8 +19,7 @@ public class CommandHandler extends TelegramLongPollingCommandBot {
     static final Logger logger = LoggerFactory.getLogger(ChatHandler.class);
 
     public CommandHandler(){
-        register(new HelloCommand());
-        register(new StopCommand());
+
         register(new HelpCommand(this));
 
         registerDefaultAction((absSender, message) -> {

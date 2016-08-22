@@ -12,6 +12,8 @@ public interface BaseService {
 
     SendMessage simsimiConversation(Message message, ReplyKeyboardMarkup replyKeyboardMarkup);
 
+    SendMessage lottoInformation(Message message);
+
     SendMessage sendErrorMessage(Message message, String errorText);
 
 }

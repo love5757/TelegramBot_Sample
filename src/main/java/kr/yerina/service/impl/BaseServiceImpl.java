@@ -1,5 +1,6 @@
 package kr.yerina.service.impl;
 
+import jersey.repackaged.com.google.common.base.Joiner;
 import kr.yerina.constant.BotConfig;
 import kr.yerina.domain.respones.SimsimiRespones;
 import kr.yerina.service.inf.BaseService;
@@ -16,6 +17,10 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Created by philip on 2016-08-19.
@@ -71,6 +76,35 @@ public class BaseServiceImpl implements BaseService{
         return sendMessage;
     }
 
+
+    public SendMessage lottoInformation(Message message) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(message.getChatId().toString());
+
+        /*RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        String baseUrl = "http://www.nlotto.co.kr/common.do?method=getLottoNumber&drwNo=";
+        String encodeText = null;
+        try {
+            encodeText = URLEncoder.encode(message.getText(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        URI uri = URI.create(baseUrl+ encodeText);
+
+        final LottoRespones result = restTemplate.getForObject(uri, LottoRespones.class);*/
+
+        //TODO 로또 사이트 접속 불가(11번가 네트워크)로 해당 내용 완료 할 수 없음.
+
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append(message.getFrom().getUserName()).append("님의 ");
+        List<Integer> lottoList = IntStream.of(lottoNumGenerator()).boxed().collect(Collectors.toList());
+        messageBuilder.append("추천번호는 [ ").append(Joiner.on(" "+'|'+" ").join(lottoList)).append(" ]");
+        sendMessage.setText(messageBuilder.toString());
+
+        return sendMessage;
+    }
+
     public SendMessage sendErrorMessage(Message message, String errorText) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
@@ -82,5 +116,40 @@ public class BaseServiceImpl implements BaseService{
 
         return sendMessage;
     }
+
+
+    private int[] lottoNumGenerator(){
+
+        //6개의 숫자 변수를 저장할 배열 생성
+        int lottoNumbers[] = new int[6];
+
+        //Random을 활용하여 1~45의 난수 생성 & 배열에 저장
+        Random random = new Random();
+
+        for(int i =0;i<lottoNumbers.length;i++){
+            lottoNumbers[i]=random.nextInt(45)+1;
+        }
+
+        //배열 안 난수의 중복 체크 & 값 재설정
+        boolean duplication = true;
+
+        for(int i =0;i<lottoNumbers.length;i++){
+            for(int j=0;j<lottoNumbers.length;j++){
+                if(i!=j&&lottoNumbers[i]==lottoNumbers[j]){
+                    duplication=true;
+                    lottoNumbers[i]=random.nextInt(45)+1;
+                    break;
+                }else{
+                    duplication=false;
+                }
+            }
+            //중복안되는 수로 변할때까지 무한 재설정되도록 i--
+            if(duplication){
+                i--;
+            }
+        }
+        return lottoNumbers;
+    }
+
 
 }
