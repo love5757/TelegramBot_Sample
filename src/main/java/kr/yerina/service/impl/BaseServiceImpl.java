@@ -43,8 +43,6 @@ public class BaseServiceImpl implements BaseService{
             if(message.getChat().isGroupChat()){
                 text.replace("/","");
             }
-            logger.debug("채팅방 type[{}]",message.getChat().isGroupChat());
-            logger.debug("심심이 보내는 메세지 [{}]",text);
 
             encodeText = URLEncoder.encode(text, "UTF-8");
         } catch (UnsupportedEncodingException e) {
