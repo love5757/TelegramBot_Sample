@@ -2,44 +2,53 @@ package kr.yerina.command;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.telegram.telegrambots.TelegramApiException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Chat;
-import org.telegram.telegrambots.api.objects.User;
-import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.bots.commands.BotCommand;
+import org.telegram.telegrambots.api.objects.Message;
 
-/**
- * This commands stops the conversation with the bot.
- * Bot won't respond to user until he sends a start command
- *
- * @author Timo Schulz (Mit0x2)
- */
-public class StopCommand extends BotCommand {
+import kr.yerina.annotation.MessageMapping;
+import kr.yerina.domain.message.TelegramMessage;
+import kr.yerina.inf.BaseCommand;
+import kr.yerina.inf.BaseMessage;
+import kr.yerina.inf.TelegramContentsMakable;
+import kr.yerina.inf.TelegramContentsParsable;
+import kr.yerina.process.TelegramProcess;
+import kr.yerina.util.CommonUtil;
+
+
+@MessageMapping(messageCommand = "/stop")
+public class StopCommand implements BaseCommand, TelegramContentsParsable, TelegramContentsMakable {
 
     static final Logger logger = LoggerFactory.getLogger(StopCommand.class);
 
-    /**
-     * Construct
-     */
-    public StopCommand() {
-        super("stop", "With this command you can stop the Bot");
+    @Autowired
+    private TelegramProcess telegramProcess;
+
+    @Override
+    public void excuete(BaseMessage msg) {
+        telegramProcess.procStopCommand(msg);
     }
 
     @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
-
-        String userName = user.getFirstName() + " " + user.getLastName();
-
-        SendMessage answer = new SendMessage();
-        answer.setChatId(chat.getId().toString());
-        answer.setText("Good bye " + userName + "\n" + "Hope to see you soon!");
-
-        try {
-            absSender.sendMessage(answer);
-        } catch (TelegramApiException e) {
-            logger.error(e.getMessage());
-        }
-
+    public BaseMessage parseContents(Message message) {
+        TelegramMessage msg = new TelegramMessage();
+        msg.setMessageCommand(CommonUtil.removeContainBotIdByCommandMessage(message));
+        msg.setMessage(message);
+        return msg;
     }
+
+    @Override
+    public SendMessage makeContents(BaseMessage msg) {
+        TelegramMessage telegramMessage = (TelegramMessage) msg;
+
+        SendMessage sendMessage = new SendMessage();
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append("Good bye ").append(telegramMessage.getMessage().getFrom().getUserName()).append("\n");
+        messageBuilder.append("Hope to see you soon!");
+        sendMessage.setChatId(telegramMessage.getMessage().getChatId().toString());
+        sendMessage.setText(messageBuilder.toString());
+
+        return sendMessage;
+    }
+
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * The type Abstract proc.
  */
 @Component
-public abstract class AbstractProc {
+public abstract class AbstractProcess {
 
 	public final Logger logger = LoggerFactory.getLogger(this.getClass());
 

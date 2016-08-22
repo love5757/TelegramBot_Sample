@@ -1,5 +1,7 @@
 package kr.yerina.util;
 
+import kr.yerina.constant.BotConfig;
+import kr.yerina.domain.Param;
 import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -9,7 +11,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import kr.yerina.domain.Param;
+import org.telegram.telegrambots.api.objects.Message;
 
 import java.lang.reflect.Field;
 import java.text.ParseException;
@@ -169,6 +171,18 @@ public class CommonUtil {
 		byte[] data2 = new byte[lastData+1];
 		System.arraycopy(data, 0, data2, 0, lastData+1);
 		return data2;
+	}
+
+	/**
+	 * 메세지에 아이디가 포함되어 있으면 해당 아이디를 삭제 하고 내용만 Return
+	 * @param message
+	 * @return
+	 */
+	public static String removeContainBotIdByCommandMessage(Message message){
+		final int selfCheckId = message.getText().indexOf("@" + BotConfig.CHAT_USER);
+		String whitoutBotIdMessageResult = message.getText();
+		if(selfCheckId != -1){ whitoutBotIdMessageResult = message.getText().split("@")[0]; }
+		return whitoutBotIdMessageResult;
 	}
 
 }

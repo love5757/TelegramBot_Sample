@@ -1,77 +1,59 @@
 package kr.yerina.command;
 
-import org.json.JSONObject;
+import kr.yerina.annotation.MessageMapping;
+import kr.yerina.domain.message.TelegramMessage;
+import kr.yerina.inf.BaseCommand;
+import kr.yerina.inf.BaseMessage;
+import kr.yerina.inf.TelegramContentsMakable;
+import kr.yerina.inf.TelegramContentsParsable;
+import kr.yerina.process.TelegramProcess;
+import kr.yerina.util.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.telegram.telegrambots.TelegramApiException;
-import org.telegram.telegrambots.api.methods.BotApiMethod;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.User;
-import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.bots.commands.BotCommand;
-import org.telegram.telegrambots.updateshandlers.SentCallback;
 
-/**
- * This command simply replies with a hello to the users command and
- * sends them the 'kind' words back, which they send via command parameters
- *
- * @author Timo Schulz (Mit0x2)
- */
-public class HelloCommand extends BotCommand {
+@MessageMapping(messageCommand = "/hello")
+public class HelloCommand implements BaseCommand, TelegramContentsParsable, TelegramContentsMakable {
 
     static final Logger logger = LoggerFactory.getLogger(HelloCommand.class);
 
-    public HelloCommand() {
-        super("hello", "Say hallo to this bot");
+
+    @Autowired
+    private TelegramProcess telegramProcess;
+
+    @Override
+    public void excuete(BaseMessage msg) {
+        telegramProcess.procHelloCommand(msg);
     }
 
     @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
+    public BaseMessage parseContents(Message message) {
+        TelegramMessage msg = new TelegramMessage();
+        msg.setMessageCommand(CommonUtil.removeContainBotIdByCommandMessage(message));
+        msg.setMessage(message);
+        return msg;
+    }
 
-        logger.debug("[{}][{}][{}][{}]",absSender, user, chat, arguments);
+    @Override
+    public SendMessage makeContents(BaseMessage msg) {
 
+        final Chat chat = msg.getMessage().getChat();
         String userName = chat.getUserName();
         if (userName == null || userName.isEmpty()) {
-            userName = user.getFirstName() + " " + user.getLastName();
+            userName = chat.getFirstName() + " " + chat.getLastName();
         }
 
         StringBuilder messageTextBuilder = new StringBuilder("Hello ").append(userName);
-        if (arguments != null && arguments.length > 0) {
-            messageTextBuilder.append("\n");
-            messageTextBuilder.append("Thank you so much for your kind words:\n");
-            messageTextBuilder.append(String.join(" ", arguments));
-        }
 
         SendMessage answer = new SendMessage();
         answer.setChatId(chat.getId().toString());
         answer.setText(messageTextBuilder.toString());
-        //커맨트에 대한 reply id setting
 
+        return answer;
 
-        try {
-
-            absSender.sendMessageAsync(answer, new SentCallback<Message>() {
-                @Override
-                public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
-                    Message sentMessage = method.deserializeResponse(jsonObject);
-                    logger.debug(sentMessage.toString());
-                }
-
-                @Override
-                public void onError(BotApiMethod<Message> botApiMethod, JSONObject jsonObject) {
-                }
-
-                @Override
-                public void onException(BotApiMethod<Message> botApiMethod, Exception e) {
-                }
-            });
-
-        } catch (TelegramApiException e) {
-            logger.error(e.getMessage());
-        }
     }
-
 
 }
