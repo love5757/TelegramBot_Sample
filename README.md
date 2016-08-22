@@ -15,5 +15,5 @@
 
 
 #Contact
-choijoungyoung@gmail.com
-love5757@me.com
+1. choijoungyoung@gmail.com
+2. love5757@me.com
