@@ -1,45 +1,53 @@
 package kr.yerina.command;
 
+import kr.yerina.annotation.MessageMapping;
+import kr.yerina.domain.message.TelegramMessage;
+import kr.yerina.inf.BaseCommand;
+import kr.yerina.inf.BaseMessage;
+import kr.yerina.inf.TelegramContentsMakable;
+import kr.yerina.inf.TelegramContentsParsable;
+import kr.yerina.process.TelegramProcess;
+import kr.yerina.util.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.telegram.telegrambots.TelegramApiException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Chat;
-import org.telegram.telegrambots.api.objects.User;
-import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.bots.commands.BotCommand;
+import org.telegram.telegrambots.api.objects.Message;
 
-/**
- * This commands starts the conversation with the bot
- *
- * @author Timo Schulz (Mit0x2)
- */
-public class StartCommand extends BotCommand {
+
+@MessageMapping(messageCommand = "/start")
+public class StartCommand implements BaseCommand, TelegramContentsParsable, TelegramContentsMakable {
 
     static final Logger logger = LoggerFactory.getLogger(StartCommand.class);
 
-    public StartCommand() {
-        super("start", "With this command you can start the Bot");
+    @Autowired
+    private TelegramProcess telegramProcess;
+
+    @Override
+    public void excuete(BaseMessage msg) {
+        telegramProcess.procStartCommand(msg);
+    }
+
+
+    @Override
+    public BaseMessage parseContents(Message message) {
+
+        TelegramMessage msg = new TelegramMessage();
+        msg.setMessageCommand(CommonUtil.removeContainBotIdByCommandMessage(message));
+        return msg;
     }
 
     @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
+    public SendMessage makeContents(BaseMessage msg) {
+        TelegramMessage telegramMessage = (TelegramMessage) msg;
 
+        SendMessage sendMessage = new SendMessage();
         StringBuilder messageBuilder = new StringBuilder();
-
-        String userName = user.getFirstName() + " " + user.getLastName();
-
-        messageBuilder.append("Welcome ").append(userName).append("\n");
+        messageBuilder.append("Welcome ").append(telegramMessage.getMessage().getFrom().getUserName()).append("\n");
         messageBuilder.append("this bot will demonstrate you the command feature of the Java TelegramBots API!");
+        sendMessage.setChatId(telegramMessage.getMessage().getChatId().toString());
+        sendMessage.setText(messageBuilder.toString());
 
-        SendMessage answer = new SendMessage();
-        answer.setChatId(chat.getId().toString());
-        answer.setText(messageBuilder.toString());
-
-        try {
-            absSender.sendMessage(answer);
-        } catch (TelegramApiException e) {
-            logger.error(e.getMessage());
-        }
+        return sendMessage;
     }
 }

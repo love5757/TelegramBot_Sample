@@ -2,7 +2,6 @@ package kr.yerina.updateshandler;
 
 import kr.yerina.command.HelloCommand;
 import kr.yerina.command.HelpCommand;
-import kr.yerina.command.StartCommand;
 import kr.yerina.command.StopCommand;
 import kr.yerina.constant.BotConfig;
 import kr.yerina.constant.Emoji;
@@ -23,7 +22,6 @@ public class CommandHandler extends TelegramLongPollingCommandBot {
 
     public CommandHandler(){
         register(new HelloCommand());
-        register(new StartCommand());
         register(new StopCommand());
         register(new HelpCommand(this));
 

@@ -1,4 +1,4 @@
-package kr.yerina.message;
+package kr.yerina.message.resolver;
 
 import kr.yerina.constant.BotConfig;
 import kr.yerina.context.RootContext;
@@ -6,9 +6,13 @@ import kr.yerina.inf.BaseBroker;
 import kr.yerina.inf.BaseMessage;
 import kr.yerina.inf.BaseMessageResolver;
 import kr.yerina.message.parser.TelegramParser;
+import kr.yerina.service.inf.BaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
 
@@ -33,9 +37,27 @@ public class TelegramMessageResolver extends TelegramLongPollingCommandBot imple
     @Override
     public void processNonCommandUpdate(Update update) {
 
-        BaseMessage msg = RootContext.applicationContext.getBean(TelegramParser.class).parseContents(update.getMessage());
-        RootContext.applicationContext.getBean(BaseBroker.class).receiveMessage(msg);
+        logger.info("[{}]", update);
 
+        final Message message = update.getMessage();
+        final int selfCheckId = message.getText().indexOf("@" + BotConfig.CHAT_USER);
+
+        if( (message.getChat().isGroupChat() && message.getText().startsWith("/") && selfCheckId != -1) || (!message.getChat().isGroupChat() && message.getText().startsWith("/")) ){
+            parseContentsAndReceiveMessage(message);
+        }else{
+            try {
+                sendMessage(RootContext.applicationContext.getBean(BaseService.class).simsimiConversation(message, null));
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void parseContentsAndReceiveMessage(Message message) {
+        BaseMessage msg = RootContext.applicationContext.getBean(TelegramParser.class).parseContents(message);
+        msg.setMessage(message);
+        RootContext.applicationContext.getBean(BaseBroker.class).receiveMessage(msg);
     }
 
     @Override
@@ -50,8 +72,15 @@ public class TelegramMessageResolver extends TelegramLongPollingCommandBot imple
         return true;
     }
 
+
     @Override
     public void resolveMessage(BaseMessage msg) {
         logger.info("[{}]",msg);
+        final SendMessage sendMessage = RootContext.applicationContext.getBean(TelegramParser.class).makeContents(msg);
+        try {
+            sendMessage(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 }

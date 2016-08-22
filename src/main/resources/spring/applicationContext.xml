@@ -29,7 +29,7 @@
 	<bean id="telegramApplicationContext" class="kr.yerina.context.TelegramApplicationContext">
 		<property name="messageResolverList">
 			<list>
-				<bean class="kr.yerina.message.TelegramMessageResolver" init-method="init"/>
+				<bean class="kr.yerina.message.resolver.TelegramMessageResolver" init-method="init"/>
 			</list>
 		</property>
 	</bean>

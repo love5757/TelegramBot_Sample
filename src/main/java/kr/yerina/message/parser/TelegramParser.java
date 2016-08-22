@@ -5,6 +5,7 @@ import kr.yerina.factory.TelegramCommandFactory;
 import kr.yerina.inf.BaseMessage;
 import kr.yerina.inf.TelegramContentsMakable;
 import kr.yerina.inf.TelegramContentsParsable;
+import kr.yerina.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -23,7 +24,7 @@ public class TelegramParser {
 
 	public BaseMessage parseContents(Message message) {
 
-		TelegramContentsParsable parser = (TelegramContentsParsable) factory.getCommandByMessageCommand(message.getText());
+		TelegramContentsParsable parser = (TelegramContentsParsable) factory.getCommandByMessageCommand(CommonUtil.removeContainBotIdByCommandMessage(message));
 		//해당 커맨드를 찾아서 parseContents
 		BaseMessage msg = parser.parseContents(message);
 		
