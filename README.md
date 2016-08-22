@@ -9,7 +9,6 @@ factory + command patten
 
 
 #Command
-- help - 사용법(봇 명령어)
 - start - 시작(봇 활성화)
 - stop - 종료(봇 비활성화)
 - hello - 인사
