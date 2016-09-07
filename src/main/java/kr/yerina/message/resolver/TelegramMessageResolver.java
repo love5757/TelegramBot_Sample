@@ -52,6 +52,7 @@ public class TelegramMessageResolver extends TelegramLongPollingCommandBot imple
         final Message message = update.getMessage();
         final int selfCheckId = message.getText().indexOf("@" + BotConfig.CHAT_USER);
 
+        //명령어 parsing
         if( (message.getChat().isGroupChat() && message.getText().startsWith("/") && selfCheckId != -1) || (!message.getChat().isGroupChat() && message.getText().startsWith("/")) ){
             parseContentsAndReceiveMessage(message);
         }else{
