@@ -1,5 +1,6 @@
 package kr.yerina.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -14,17 +15,25 @@ import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.nio.charset.Charset;
+import java.util.*;
 
 /**
  * The type Http client util.
  */
 public class HttpClientUtil {
+
+	RestTemplate restTemplate = new RestTemplate();
+	ObjectMapper objectMapper = new ObjectMapper();
+
+	private String getServerUrl(String domain, int port) {
+		return "http://" + domain + ":" + port;
+	}
 
 	/**
 	 * Gets parms.
@@ -199,6 +208,55 @@ public class HttpClientUtil {
 		
 	}
 
+//TODO 작업 해야함
+	public void sendByPost(String domain, int port) {
+		String serverUrl = getServerUrl(domain, port);
+
+		Map<String, Object> params = new HashMap<>();
+
+		params.put("data", "test");
+
+		String body = null;
+		try {
+			body = objectMapper.writeValueAsString(params);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		if(body != null) {
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+            org.springframework.http.HttpEntity entity = new org.springframework.http.HttpEntity(body, headers);
+
+			restTemplate.postForEntity(
+					serverUrl,
+					entity,
+					String.class
+					);
+		}
+	}
+
+    //TODO 작업 해야함
+	public void sendByGet(String domain, int port, String appId, String authKey, String channelName, String event, String message) {
+		String serverUrl = getServerUrl(domain, port);
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("channels", channelName);
+		params.put("event", event);
+		params.put("auth_key", authKey);
+		params.put("data", message);
+		params.put("app_id", appId);
+
+		restTemplate.getForObject(
+				serverUrl + "/channel/{app_id}?channels={channels}&event={event}&auth_key={auth_key}&data={data}",
+				String.class,
+				params);
+	}
+
+
+
+
 	/**
 	 * The entry point of application.
 	 *
@@ -218,4 +276,7 @@ public class HttpClientUtil {
 		}
 		
 	}
+
+
+
 }
