@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/love5757/TelegramBot_Sample.svg?branch=feature_telegram_test)](https://travis-ci.org/love5757/TelegramBot_Sample)
+
 # TelegramBot_Sample with spring + mysql
 커맨트 패턴 학습용으로 만들어진 봇 임 그외 다양한 학습의 흔적들이 존재하여
 참고용으로만 봐주세요.
